@@ -15,3 +15,6 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     org.hibernate.SQL: INFO
+
+server:
+  port: 8083

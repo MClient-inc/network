@@ -10,8 +10,15 @@ spring:
   mvc:
     log-request-details: true
     log-resolved-exception: true
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8083
 logging:
   level:
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     org.hibernate.SQL: INFO
+    org.springframework.security.oauth2: INFO
+    org.springframework.boot.autoconfigure: DEBUG
