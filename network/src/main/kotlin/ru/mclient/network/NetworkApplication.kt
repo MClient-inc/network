@@ -1,4 +1,4 @@
-package ru.mclient.network
+    package ru.mclient.network
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
