@@ -1,23 +1,21 @@
 package ru.mclient.network.branch.controller
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
-import ru.mclient.network.network.CompanyNetworkNotExists
-import ru.mclient.network.network.service.CompanyNetworkService
+import ru.mclient.network.account.service.AccountService
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.branch.service.CompanyBranchService
+import ru.mclient.network.network.CompanyNetworkNotExists
+import ru.mclient.network.network.service.CompanyNetworkService
 
 
 @RestController
 @RequestMapping("/branches")
 class CompanyBranchController(
     val companyBranchService: CompanyBranchService,
-    val companyNetworkService: CompanyNetworkService,
+    private val accountService: AccountService,
+    private val companyNetworkService: CompanyNetworkService,
 ) {
 
 
@@ -48,17 +46,21 @@ class CompanyBranchController(
 
     @PostMapping("createCompanyBranch")
     fun createCompany(@RequestBody request: CreateCompanyRequest): CreateCompanyResponse {
-        val network =
+        val account = accountService.findAccountFromCurrentContext()
+        val network = if (request.networkId == null) {
+            companyNetworkService.findFirstCompanyNetworkForAccount(account = account)
+        } else {
             companyNetworkService.findCompanyNetworkById(request.networkId, throwOnDisabled = false)
-                ?: throw ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Chain does not exists"
-                )
+        } ?: companyNetworkService.createCompanyNetwork(
+            codename = "${request.codename}_network",
+            title = "Сеть ${request.title}"
+        )
         val company = companyBranchService.createCompanyBranch(request.codename, request.title, network)
         return CreateCompanyResponse(
             id = company.id,
             codename = company.codename,
             title = company.title,
-            networkId = request.networkId,
+            networkId = network.id,
         )
     }
 
@@ -82,7 +84,7 @@ class CompanyBranchController(
 
 
 class CreateCompanyRequest(
-    val networkId: Long,
+    val networkId: Long? = null,
     val codename: String,
     val title: String,
 )
