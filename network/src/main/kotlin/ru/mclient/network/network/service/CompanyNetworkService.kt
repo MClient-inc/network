@@ -10,11 +10,12 @@ interface CompanyNetworkService {
 
     fun findFirstCompanyNetworkForAccount(
         account: MClientAccountEntity,
-        throwOnDisabled: Boolean = true,
     ): CompanyNetworkEntity?
 
     fun findCompanyNetworkByCodename(codename: String, throwOnDisabled: Boolean = true): CompanyNetworkEntity?
 
-    fun createCompanyNetwork(codename: String, title: String): CompanyNetworkEntity
+    fun findAvailableCompanyNetworks(skipOnDisabled: Boolean = true): List<CompanyNetworkEntity>
+
+    fun createCompanyNetwork(codename: String, title: String, owner: MClientAccountEntity): CompanyNetworkEntity
 
 }

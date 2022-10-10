@@ -13,6 +13,9 @@ class CompanyNetworkEntity(
     var codename: String,
     @OneToOne(mappedBy = "network", fetch = FetchType.LAZY)
     var disable: CompanyNetworkDisableEntity? = null,
+    @ManyToOne
+    @JoinColumn
+    var owner: MClientAccountEntity,
     @Id
     @GeneratedValue
     @Column(name = "id")

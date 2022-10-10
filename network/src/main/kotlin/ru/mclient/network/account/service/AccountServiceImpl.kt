@@ -21,7 +21,7 @@ class AccountServiceImpl(private val accounts: MClientAccountRepository) : Accou
 
     override fun findAccountFromCurrentContext(): MClientAccountEntity {
         val authorization = SecurityContextHolder.getContext().authentication
-        if (authorization.isAuthenticated)
+        if (!authorization.isAuthenticated)
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         return findAccountByUsername(authorization.name)
     }

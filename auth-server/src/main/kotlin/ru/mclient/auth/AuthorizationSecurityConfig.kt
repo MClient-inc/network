@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
+import com.zaxxer.hikari.HikariDataSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -69,21 +70,14 @@ class SecurityConfig {
             .build()
     }
 
-    @Bean
-    fun dataSource(): DataSource {
-        return EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.H2)
-            .addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
-            .build()
-    }
 
     @Bean
-    fun userDetailsService(dataSource: DataSource): UserDetailsManager {
+        fun userDetailsService(dataSource: DataSource): UserDetailsManager {
 //        val userDetails = User.withDefaultPasswordEncoder()
 //            .username("user")
 //            .password("password")
 //            .roles("USER")
-//            .build()
+//            .build()w
         return JdbcUserDetailsManager(dataSource)
 //        return InMemoryUserDetailsManager(userDetails)
     }

@@ -2,8 +2,10 @@ package ru.mclient.network.network.service
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import ru.mclient.network.network.CompanyNetworkDisabled
+import ru.mclient.network.account.domain.MClientAccountEntity
+import ru.mclient.network.account.service.AccountService
 import ru.mclient.network.network.CompanyNetworkAlreadyExists
+import ru.mclient.network.network.CompanyNetworkDisabled
 import ru.mclient.network.network.domain.CompanyNetworkEntity
 import ru.mclient.network.network.repository.CompanyNetworkRepository
 import javax.transaction.Transactional
@@ -11,6 +13,7 @@ import javax.transaction.Transactional
 @Service
 class CompanyNetworkServiceImpl(
     private val companyNetworkRepository: CompanyNetworkRepository,
+    private val accountService: AccountService,
 ) : CompanyNetworkService {
 
     @Transactional
@@ -29,11 +32,24 @@ class CompanyNetworkServiceImpl(
         return network
     }
 
-    @Transactional
-    override fun createCompanyNetwork(codename: String, title: String): CompanyNetworkEntity {
-        if (companyNetworkRepository.existsByCodename(codename))
-            throw CompanyNetworkAlreadyExists(codename)
-        return companyNetworkRepository.save(CompanyNetworkEntity(title = title, codename = codename))
+    override fun findAvailableCompanyNetworks(skipOnDisabled: Boolean): List<CompanyNetworkEntity> {
+        return companyNetworkRepository.findAllByOwnerAndDisableNull(accountService.findAccountFromCurrentContext())
     }
 
+    @Transactional
+    override fun createCompanyNetwork(
+        codename: String,
+        title: String,
+        owner: MClientAccountEntity,
+    ): CompanyNetworkEntity {
+        if (companyNetworkRepository.existsByCodename(codename))
+            throw CompanyNetworkAlreadyExists(codename)
+        return companyNetworkRepository.save(CompanyNetworkEntity(title = title, codename = codename, owner = owner))
+    }
+
+    override fun findFirstCompanyNetworkForAccount(
+        account: MClientAccountEntity,
+    ): CompanyNetworkEntity? {
+        return companyNetworkRepository.findFirstByOwnerAndDisableNull(account)
+    }
 }
