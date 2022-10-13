@@ -1,6 +1,7 @@
 package ru.mclient.network.network.service
 
 import ru.mclient.network.account.domain.MClientAccountEntity
+import ru.mclient.network.network.CompanyNetworkNotExists
 import ru.mclient.network.network.domain.CompanyNetworkEntity
 
 interface CompanyNetworkService {
@@ -17,5 +18,7 @@ interface CompanyNetworkService {
     fun findAvailableCompanyNetworks(skipOnDisabled: Boolean = true): List<CompanyNetworkEntity>
 
     fun createCompanyNetwork(codename: String, title: String, owner: MClientAccountEntity): CompanyNetworkEntity
+
+    fun findByIdOrCodename(query: String): CompanyNetworkEntity
 
 }

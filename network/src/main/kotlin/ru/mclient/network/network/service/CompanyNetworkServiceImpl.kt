@@ -6,6 +6,7 @@ import ru.mclient.network.account.domain.MClientAccountEntity
 import ru.mclient.network.account.service.AccountService
 import ru.mclient.network.network.CompanyNetworkAlreadyExists
 import ru.mclient.network.network.CompanyNetworkDisabled
+import ru.mclient.network.network.CompanyNetworkNotExists
 import ru.mclient.network.network.domain.CompanyNetworkEntity
 import ru.mclient.network.network.repository.CompanyNetworkRepository
 import javax.transaction.Transactional
@@ -51,5 +52,19 @@ class CompanyNetworkServiceImpl(
         account: MClientAccountEntity,
     ): CompanyNetworkEntity? {
         return companyNetworkRepository.findFirstByOwnerAndDisableNull(account)
+    }
+
+    override fun findByIdOrCodename(query: String): CompanyNetworkEntity {
+        return when {
+            query.firstOrNull()?.isDigit() == true -> {
+                val id = query.toLong()
+                findCompanyNetworkById(id)
+                    ?: throw CompanyNetworkNotExists(query)
+            }
+
+            else -> findCompanyNetworkByCodename(query)
+                ?: throw CompanyNetworkNotExists(query)
+
+        }
     }
 }

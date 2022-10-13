@@ -15,7 +15,7 @@ class CompanyNetworkController(
 
     @GetMapping("/networks/{query}")
     fun getCompanyNetwork(@PathVariable query: String): GetCompanyNetworkResponse {
-        val network = findByIdOrCodename(query)
+        val network = companyNetworkService.findByIdOrCodename(query)
         return GetCompanyNetworkResponse(
             id = network.id,
             title = network.title,
@@ -45,20 +45,6 @@ class CompanyNetworkController(
                 )
             }
         )
-    }
-
-    private fun findByIdOrCodename(query: String): CompanyNetworkEntity {
-        return when {
-            query.firstOrNull()?.isDigit() == true -> {
-                val id = query.toLong()
-                companyNetworkService.findCompanyNetworkById(id)
-                    ?: throw CompanyNetworkNotExists(query)
-            }
-
-            else -> companyNetworkService.findCompanyNetworkByCodename(query)
-                ?: throw CompanyNetworkNotExists(query)
-
-        }
     }
 
 }

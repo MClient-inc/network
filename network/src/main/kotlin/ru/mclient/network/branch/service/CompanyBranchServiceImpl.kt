@@ -2,11 +2,12 @@ package ru.mclient.network.branch.service
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import ru.mclient.network.network.CompanyNetworkDisabled
-import ru.mclient.network.network.CompanyNetworkAlreadyExists
-import ru.mclient.network.network.domain.CompanyNetworkEntity
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.branch.repository.CompanyRepository
+import ru.mclient.network.network.CompanyNetworkAlreadyExists
+import ru.mclient.network.network.CompanyNetworkDisabled
+import ru.mclient.network.network.CompanyNetworkNotExists
+import ru.mclient.network.network.domain.CompanyNetworkEntity
 import javax.transaction.Transactional
 
 @Service
@@ -48,5 +49,18 @@ class CompanyBranchServiceImpl(
         return branch
     }
 
+    override fun findByIdOrCodename(query: String): CompanyBranchEntity {
+        return when {
+            query.firstOrNull()?.isDigit() == true -> {
+                val id = query.toLong()
+                findCompanyById(id)
+                    ?: throw CompanyNetworkNotExists(query)
+            }
+
+            else -> findCompanyByCodename(query)
+                ?: throw CompanyNetworkNotExists(query)
+
+        }
+    }
 
 }

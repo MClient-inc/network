@@ -16,9 +16,9 @@ class CompanyBranchController(
 ) {
 
 
-    @GetMapping("/branches/{query}")
+    @GetMapping("/companies/{query}")
     fun getCompanyBranch(@PathVariable query: String): GetCompanyBranchResponse {
-        val company = findByIdOrCodename(query)
+        val company = companyBranchService.findByIdOrCodename(query)
         return GetCompanyBranchResponse(
             id = company.id, title = company.title, codename = company.codename, networkId = company.network.id
         )
@@ -61,20 +61,6 @@ class CompanyBranchController(
             networkId = network.id,
             description = "",
         )
-    }
-
-    private fun findByIdOrCodename(query: String): CompanyBranchEntity {
-        return when {
-            query.firstOrNull()?.isDigit() == true -> {
-                val id = query.toLong()
-                companyBranchService.findCompanyById(id)
-                    ?: throw CompanyNetworkNotExists(query)
-            }
-
-            else -> companyBranchService.findCompanyByCodename(query)
-                ?: throw CompanyNetworkNotExists(query)
-
-        }
     }
 
 }
