@@ -7,5 +7,6 @@ import ru.mclient.network.staff.domain.StaffEntity
 interface StaffRepository : CrudRepository<StaffEntity, Long> {
 
     fun findAllByCompany(company: CompanyBranchEntity): List<StaffEntity>
+    fun findByCodename(codename: String): StaffEntity?
 
 }

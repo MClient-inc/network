@@ -10,6 +10,8 @@ class StaffEntity(
     var name: String,
     @Column(length = 100)
     var role: String,
+    @Column(unique = true, length = 32)
+    var codename: String,
     @ManyToOne
     @JoinColumn
     var company: CompanyBranchEntity,
