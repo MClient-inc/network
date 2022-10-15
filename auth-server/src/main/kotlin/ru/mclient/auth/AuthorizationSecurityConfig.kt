@@ -5,15 +5,11 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import com.zaxxer.hikari.HikariDataSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer
-import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -24,7 +20,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import org.springframework.security.provisioning.JdbcUserDetailsManager
 import org.springframework.security.provisioning.UserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
@@ -35,6 +31,8 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.*
 import javax.sql.DataSource
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 
 @Configuration
@@ -72,7 +70,7 @@ class SecurityConfig {
 
 
     @Bean
-        fun userDetailsService(dataSource: DataSource): UserDetailsManager {
+    fun userDetailsService(dataSource: DataSource): UserDetailsManager {
 //        val userDetails = User.withDefaultPasswordEncoder()
 //            .username("user")
 //            .password("password")
@@ -98,7 +96,6 @@ class SecurityConfig {
             .build()
         return InMemoryRegisteredClientRepository(registeredClient)
     }
-
 
 
     @Bean
