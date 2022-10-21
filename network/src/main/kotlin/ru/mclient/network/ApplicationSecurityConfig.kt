@@ -18,6 +18,7 @@ class ApplicationSecurityConfig {
             .mvcMatchers("/companies/**").authenticated()
             .mvcMatchers("/networks/**").authenticated()
             .mvcMatchers("/staff/**").authenticated()
+            .mvcMatchers("/categories/**").authenticated()
             .anyRequest().denyAll()
             .and()
             .oauth2ResourceServer()

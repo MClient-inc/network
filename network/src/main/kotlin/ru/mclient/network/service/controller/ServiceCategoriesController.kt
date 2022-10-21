@@ -8,7 +8,7 @@ import ru.mclient.network.network.service.CompanyNetworkService
 import ru.mclient.network.service.service.ServiceCategoriesService
 
 @RestController
-class ServicesController(
+class ServiceCategoriesController(
     private val serviceCategoriesService: ServiceCategoriesService,
     private val companyNetworkService: CompanyNetworkService,
     private val companyBranchService: CompanyBranchService,
@@ -21,9 +21,9 @@ class ServicesController(
             companyBranchService.findCompanyById(companyId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val services = serviceCategoriesService.findServiceCategoriesByCompany(company)
         return GetServiceCategoriesForCompanyResponse(
-            categories   = services.map { service ->
+            categories = services.map { service ->
                 GetServiceCategoriesForCompanyResponse.ServiceCategory(
-                    id = service.id,
+                    id = service.category.id,
                     title = service.category.title,
                 )
             }
@@ -55,7 +55,7 @@ class ServicesController(
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val category = serviceCategoriesService.createServiceCategoriesForCompany(data.title, company)
         return CreateServiceCategoryResponse(
-            id = category.id,
+            id = category.category.id,
             title = category.category.title,
         )
     }
@@ -74,7 +74,20 @@ class ServicesController(
         )
     }
 
+    @GetMapping("/categories/{categoryId}")
+    fun getServiceCategoryById(
+        @PathVariable categoryId: Long,
+    ): GetServiceCategoryResponse {
+        val service = serviceCategoriesService.findByCategoryId(categoryId)
+        return GetServiceCategoryResponse(service.id, service.title)
+    }
+
 }
+
+class GetServiceCategoryResponse(
+    val id: Long,
+    val title: String,
+)
 
 class GetServiceCategoriesForNetworkResponse(
     val services: List<ServiceCategory>,
@@ -84,6 +97,7 @@ class GetServiceCategoriesForNetworkResponse(
         val title: String,
     )
 }
+
 class GetServiceCategoriesForCompanyResponse(
     val categories: List<ServiceCategory>,
 ) {

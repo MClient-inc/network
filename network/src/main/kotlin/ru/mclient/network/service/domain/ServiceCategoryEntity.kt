@@ -19,7 +19,7 @@ class ServiceCategoryEntity(
 
 @Entity
 @Table(name = "service_categories_for_company")
-class ServiceCategoryForCompanyEntity(
+class ServiceCategoryToCompanyEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     var company: CompanyBranchEntity,
