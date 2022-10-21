@@ -18,7 +18,7 @@ class CompanyBranchServiceImpl(
 
     @Transactional
     override fun findCompanyByCodename(codename: String, throwOnDisabled: Boolean): CompanyBranchEntity? {
-        val branch = companyRepository.findByCodename(codename) ?: return null
+        val branch = companyRepository.findByCodenameIgnoreCase(codename) ?: return null
         if (throwOnDisabled && branch.disable != null)
             throw CompanyNetworkDisabled(branch.id)
         return branch
@@ -32,7 +32,7 @@ class CompanyBranchServiceImpl(
     ): CompanyBranchEntity {
         if (network.disable != null)
             throw CompanyNetworkDisabled(network.id.toString())
-        if (companyRepository.existsByCodename(codename))
+        if (companyRepository.existsByCodenameIgnoreCase(codename))
             throw CompanyNetworkAlreadyExists(network.id)
         return companyRepository.save(CompanyBranchEntity(title = title, codename = codename, network = network))
     }

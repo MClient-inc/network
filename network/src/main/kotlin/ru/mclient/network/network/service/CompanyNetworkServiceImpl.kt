@@ -27,7 +27,7 @@ class CompanyNetworkServiceImpl(
 
     @Transactional
     override fun findCompanyNetworkByCodename(codename: String, throwOnDisabled: Boolean): CompanyNetworkEntity? {
-        val network = companyNetworkRepository.findByCodename(codename) ?: return null
+        val network = companyNetworkRepository.findByCodenameIgnoreCase(codename) ?: return null
         if (throwOnDisabled && network.disable != null)
             throw CompanyNetworkDisabled(network.id)
         return network
@@ -43,7 +43,7 @@ class CompanyNetworkServiceImpl(
         title: String,
         owner: MClientAccountEntity,
     ): CompanyNetworkEntity {
-        if (companyNetworkRepository.existsByCodename(codename))
+        if (companyNetworkRepository.existsByCodenameIgnoreCase(codename))
             throw CompanyNetworkAlreadyExists(codename)
         return companyNetworkRepository.save(CompanyNetworkEntity(title = title, codename = codename, owner = owner))
     }

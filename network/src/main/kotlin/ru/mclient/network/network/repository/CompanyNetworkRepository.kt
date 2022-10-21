@@ -6,12 +6,12 @@ import ru.mclient.network.network.domain.CompanyNetworkEntity
 
 interface CompanyNetworkRepository: CrudRepository<CompanyNetworkEntity, Long> {
 
-    fun findByCodename(codename: String): CompanyNetworkEntity?
+    fun findByCodenameIgnoreCase(codename: String): CompanyNetworkEntity?
 
     fun findFirstByOwnerAndDisableNull(owner: MClientAccountEntity): CompanyNetworkEntity?
 
     fun findAllByOwnerAndDisableNull(owner: MClientAccountEntity): List<CompanyNetworkEntity>
 
-    fun existsByCodename(codename: String): Boolean
+    fun existsByCodenameIgnoreCase(codename: String): Boolean
 
 }
