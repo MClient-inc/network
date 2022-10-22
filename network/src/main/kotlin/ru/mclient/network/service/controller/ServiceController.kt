@@ -31,6 +31,7 @@ class ServiceController(
                     id = service.id,
                     categoryId = service.category.id,
                     title = service.title,
+                    cost = service.cost,
                 )
             }
         )
@@ -43,9 +44,10 @@ class ServiceController(
     ): CreateServiceResponse {
         val company = data.companyId?.let(companyService::findCompanyById)
         val category = serviceCategoriesService.findByCategoryId(categoryId)
-        val service = serviceService.createService(data.title, category, company)
+        val service = serviceService.createService(data.title, data.cost, category, company)
         return CreateServiceResponse(
-            title = service.title
+            title = service.title,
+            cost = service.cost,
         )
     }
 
@@ -53,11 +55,13 @@ class ServiceController(
 
 class CreateServiceRequest(
     val title: String,
+    val cost: Long,
     val companyId: Long?,
 )
 
 class CreateServiceResponse(
     val title: String,
+    val cost: Long,
 )
 
 class GetServicesForCategoryResponse(
@@ -68,6 +72,7 @@ class GetServicesForCategoryResponse(
         val id: Long,
         val categoryId: Long,
         val title: String,
+        val cost: Long,
     )
 
 }

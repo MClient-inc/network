@@ -6,6 +6,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "service")
 class ServiceEntity(
+    var cost: Long,
     var title: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -18,6 +19,7 @@ class ServiceEntity(
 @Entity
 @Table(name = "service_to_company")
 class ServiceToCompanyEntity(
+    var cost: Long,
     @JoinColumn
     @ManyToOne
     var service: ServiceEntity,

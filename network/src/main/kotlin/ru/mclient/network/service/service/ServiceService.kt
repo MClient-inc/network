@@ -9,6 +9,7 @@ interface ServiceService {
     fun findServicesByCategory(category: ServiceCategoryEntity, company: CompanyBranchEntity?): List<ServiceEntity>
     fun createService(
         title: String,
+        cost: Long,
         category: ServiceCategoryEntity,
         company: CompanyBranchEntity? = null
     ): ServiceEntity

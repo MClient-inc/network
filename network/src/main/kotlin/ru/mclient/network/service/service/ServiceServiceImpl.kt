@@ -30,19 +30,22 @@ class ServiceServiceImpl(
     @Transactional
     override fun createService(
         title: String,
+        cost: Long,
         category: ServiceCategoryEntity,
         company: CompanyBranchEntity?,
     ): ServiceEntity {
-        val service = servicesRepository.save(ServiceEntity(title = title, category = category))
+        val service = servicesRepository.save(ServiceEntity(title = title, cost = cost, category = category))
         if (company != null) {
             val categoryToCompany = categoryService.findByCategoryAndCompany(category = category, company = company)
             serviceToCompanyRepository.save(
                 ServiceToCompanyEntity(
                     service = service,
-                    categoryToCompany = categoryToCompany
+                    categoryToCompany = categoryToCompany,
+                    cost = cost,
                 )
             )
         }
         return service
     }
+
 }
