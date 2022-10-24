@@ -19,10 +19,13 @@ class ApplicationSecurityConfig {
             .mvcMatchers("/networks/**").authenticated()
             .mvcMatchers("/staff/**").authenticated()
             .mvcMatchers("/categories/**").authenticated()
+            .mvcMatchers("/services/**").authenticated()
+            .mvcMatchers("/clients/**").authenticated()
             .anyRequest().denyAll()
             .and()
-            .oauth2ResourceServer()
-            .jwt().and().and().build()
+            .oauth2ResourceServer().jwt().and()
+            .and()
+            .build()
     }
 
 
