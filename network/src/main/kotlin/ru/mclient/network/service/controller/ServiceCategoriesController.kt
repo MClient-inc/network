@@ -16,9 +16,9 @@ class ServiceCategoriesController(
 
 
     @GetMapping("/companies/{companyId}/categories")
-    fun getServiceCategoriesForCompany(@PathVariable companyId: Long): GetServiceCategoriesForCompanyResponse {
+    fun getServiceCategoriesForCompany(@PathVariable companyId: String): GetServiceCategoriesForCompanyResponse {
         val company =
-            companyBranchService.findCompanyById(companyId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+            companyBranchService.findCompanyByCodename(companyId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val services = serviceCategoriesService.findServiceCategoriesByCompany(company)
         return GetServiceCategoriesForCompanyResponse(
             categories = services.map { service ->
@@ -31,9 +31,9 @@ class ServiceCategoriesController(
     }
 
     @GetMapping("/networks/{networkId}/categories")
-    fun getServiceCategoriesForNetwork(@PathVariable networkId: Long): GetServiceCategoriesForNetworkResponse {
+    fun getServiceCategoriesForNetwork(@PathVariable networkId: String): GetServiceCategoriesForNetworkResponse {
         val network =
-            companyNetworkService.findCompanyNetworkById(networkId)
+            companyNetworkService.findByIdOrCodename(networkId)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val services = serviceCategoriesService.findServiceCategoriesByNetwork(network)
         return GetServiceCategoriesForNetworkResponse(
@@ -48,10 +48,10 @@ class ServiceCategoriesController(
 
     @PostMapping("/companies/{companyId}/categories")
     fun createServiceCategoryForCompany(
-        @PathVariable companyId: Long,
+        @PathVariable companyId: String,
         @RequestBody data: CreateServiceCategoryRequest,
     ): CreateServiceCategoryResponse {
-        val company = companyBranchService.findCompanyById(companyId)
+        val company = companyBranchService.findByIdOrCodename(companyId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val category = serviceCategoriesService.createServiceCategoriesForCompany(data.title, company)
         return CreateServiceCategoryResponse(
@@ -62,10 +62,10 @@ class ServiceCategoriesController(
 
     @PostMapping("/networks/{networkId}/categories")
     fun createServiceCategoryForNetwork(
-        @PathVariable networkId: Long,
+        @PathVariable networkId: String,
         @RequestBody data: CreateServiceCategoryRequest,
     ): CreateServiceCategoryResponse {
-        val network = companyNetworkService.findCompanyNetworkById(networkId)
+        val network = companyNetworkService.findByIdOrCodename(networkId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val category = serviceCategoriesService.createServiceCategoriesForNetwork(data.title, network)
         return CreateServiceCategoryResponse(

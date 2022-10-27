@@ -5,12 +5,24 @@ import org.springframework.stereotype.Service
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.network.CompanyNetworkNotExists
 import ru.mclient.network.staff.domain.StaffEntity
+import ru.mclient.network.staff.domain.StaffScheduleEntity
 import ru.mclient.network.staff.repository.StaffRepository
+import ru.mclient.network.staff.repository.StaffScheduleRepository
+import java.time.LocalDate
 
 @Service
 class StaffServiceImpl(
     private val staffRepository: StaffRepository,
+    private val staffScheduleRepository: StaffScheduleRepository,
 ) : StaffService {
+
+    override fun findScheduleByStaff(
+        staff: List<StaffEntity>,
+        date: LocalDate,
+    ): Map<StaffEntity, List<StaffScheduleEntity>> {
+        return staffScheduleRepository.findByStaffInAndDate(staff, date).groupBy { it.staff }
+    }
+
     override fun findAllStaffForCompany(company: CompanyBranchEntity): List<StaffEntity> {
         return staffRepository.findAllByCompany(company)
     }
@@ -46,5 +58,28 @@ class StaffServiceImpl(
                 ?: throw CompanyNetworkNotExists(query)
 
         }
+    }
+
+    override fun findScheduleByStaff(staff: StaffEntity, start: LocalDate, end: LocalDate): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findByStaffAndDateBetween(staff, start, end)
+    }
+
+    override fun findScheduleByStaff(staff: StaffEntity, date: LocalDate): StaffScheduleEntity? {
+        return staffScheduleRepository.findByStaffAndDate(staff, date)
+    }
+
+    override fun findScheduleByCompany(
+        company: CompanyBranchEntity,
+        date: LocalDate,
+    ): Map<StaffEntity, List<StaffScheduleEntity>> {
+        return staffScheduleRepository.findByStaffCompanyAndDate(company, date).groupBy { it.staff }
+    }
+
+    override fun addStaffSchedule(schedule: List<StaffScheduleEntity>): List<StaffScheduleEntity> {
+        return staffScheduleRepository.saveAll(schedule).toList()
+    }
+
+    override fun findStaffByIds(staffId: List<Long>): List<StaffEntity> {
+        return staffRepository.findAllById(staffId).toList()
     }
 }

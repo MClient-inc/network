@@ -1,5 +1,6 @@
 package ru.mclient.network.staff.controllers
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import ru.mclient.network.branch.service.CompanyBranchService
 import ru.mclient.network.staff.service.StaffService
@@ -10,6 +11,7 @@ class CompanyStaffController(
     private val staffService: StaffService,
 ) {
 
+    @Tag(name = "Staff")
     @GetMapping("/companies/{companyId}/staff")
     fun getStaffForCompany(@PathVariable companyId: String): GetStaffForCompanyResponse {
         val company = companyService.findByIdOrCodename(companyId)
@@ -26,6 +28,7 @@ class CompanyStaffController(
         )
     }
 
+    @Tag(name = "Staff")
     @PostMapping("/companies/{companyId}/staff")
     fun createStaff(@PathVariable companyId: String, @RequestBody request: CreateStaffRequest): CreateStaffResponse {
         val company = companyService.findByIdOrCodename(companyId)
@@ -43,8 +46,9 @@ class CompanyStaffController(
         )
     }
 
+    @Tag(name = "Staff")
     @GetMapping("/staff/{staffId}")
-    fun getStaff(@PathVariable staffId: String): GetStaffResponse {
+    fun getStaffById(@PathVariable staffId: String): GetStaffResponse {
         val staff = staffService.findByIdOrCodename(staffId)
         return GetStaffResponse(
             id = staff.id,

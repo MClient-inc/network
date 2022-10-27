@@ -21,6 +21,7 @@ class ApplicationSecurityConfig {
             .mvcMatchers("/categories/**").authenticated()
             .mvcMatchers("/services/**").authenticated()
             .mvcMatchers("/clients/**").authenticated()
+            .mvcMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().denyAll()
             .and()
             .oauth2ResourceServer().jwt().and()
