@@ -35,7 +35,7 @@ class StaffScheduleController(
     ): GetSingleStaffScheduleResponse {
         val staff = staffService.findByStaffId(staffId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         return GetSingleStaffScheduleResponse(
-            schedule = staffService.findScheduleByStaff(staff, start, end).map {
+            schedule = staffService.findScheduleByStaff(staff, start, end, null).map {
                 GetSingleStaffScheduleResponse.ScheduleDate(
                     date = it.date,
                     slots = listOf(GetSingleStaffScheduleResponse.ScheduleSlot(from = it.from, to = it.to))
@@ -55,10 +55,10 @@ class StaffScheduleController(
     ): GetMultipleStaffScheduleResponse {
         val schedule = if (staffId.isNullOrEmpty()) {
             val company = companyBranchService.findByIdOrCodename(companyId)
-            staffService.findScheduleByCompany(company, date)
+            staffService.findScheduleByCompany(company, date, null)
         } else {
             val staff = staffService.findStaffByIds(staffId)
-            staffService.findScheduleByStaff(staff, date)
+            staffService.findScheduleByStaff(staff, date, null)
         }
         return GetMultipleStaffScheduleResponse(
             schedule = schedule.map { (staff, schedule) ->

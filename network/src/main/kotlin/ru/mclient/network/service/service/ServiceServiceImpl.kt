@@ -21,6 +21,17 @@ class ServiceServiceImpl(
     private val serviceToStaffRepository: ServiceToStaffRepository,
 ) : ServiceService {
 
+    override fun findServicesByIds(serviceIds: List<Long>): List<ServiceEntity> {
+        return servicesRepository.findAllById(serviceIds).toList()
+    }
+
+    override fun findServicesByIdsAndCompany(
+        serviceIds: List<Long>,
+        company: CompanyBranchEntity,
+    ): List<ServiceToCompanyEntity> {
+        return serviceToCompanyRepository.findAllByServiceIdInAndCategoryToCompanyCompany(serviceIds, company)
+    }
+
     override fun findServiceToCompany(service: ServiceEntity, company: CompanyBranchEntity): ServiceToCompanyEntity? {
         return serviceToCompanyRepository.findByServiceAndCategoryToCompanyCompany(service, company)
     }
@@ -63,6 +74,7 @@ class ServiceServiceImpl(
     override fun createService(
         title: String,
         cost: Long,
+        durationInMinutes: Int,
         category: ServiceCategoryEntity,
         company: CompanyBranchEntity?,
     ): ServiceEntity {
@@ -74,6 +86,7 @@ class ServiceServiceImpl(
                     service = service,
                     categoryToCompany = categoryToCompany,
                     cost = cost,
+                    durationInMinutes = durationInMinutes,
                 )
             )
         }

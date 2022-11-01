@@ -1,5 +1,6 @@
 package ru.mclient.network.staff.service
 
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import ru.mclient.network.branch.domain.CompanyBranchEntity
@@ -8,6 +9,7 @@ import ru.mclient.network.staff.domain.StaffEntity
 import ru.mclient.network.staff.domain.StaffScheduleEntity
 import ru.mclient.network.staff.repository.StaffRepository
 import ru.mclient.network.staff.repository.StaffScheduleRepository
+import ru.mclient.network.utils.toPageable
 import java.time.LocalDate
 
 @Service
@@ -19,8 +21,9 @@ class StaffServiceImpl(
     override fun findScheduleByStaff(
         staff: List<StaffEntity>,
         date: LocalDate,
+        limit: Int?,
     ): Map<StaffEntity, List<StaffScheduleEntity>> {
-        return staffScheduleRepository.findByStaffInAndDate(staff, date).groupBy { it.staff }
+        return staffScheduleRepository.findAllByStaffInAndDate(staff, date, limit.toPageable()).groupBy { it.staff }
     }
 
     override fun findAllStaffForCompany(company: CompanyBranchEntity): List<StaffEntity> {
@@ -60,19 +63,39 @@ class StaffServiceImpl(
         }
     }
 
-    override fun findScheduleByStaff(staff: StaffEntity, start: LocalDate, end: LocalDate): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findByStaffAndDateBetween(staff, start, end)
+    override fun findScheduleByStaff(
+        staff: StaffEntity,
+        start: LocalDate,
+        end: LocalDate,
+        limit: Int?,
+    ): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffAndDateBetween(staff, start, end, limit.toPageable())
+    }
+
+    override fun findScheduleByStaff(
+        staff: List<StaffEntity>,
+        start: LocalDate,
+        end: LocalDate,
+        limit: Int,
+    ): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffInAndDateBetween(staff, start, end, Pageable.ofSize(limit))
     }
 
     override fun findScheduleByStaff(staff: StaffEntity, date: LocalDate): StaffScheduleEntity? {
         return staffScheduleRepository.findByStaffAndDate(staff, date)
     }
 
+    override fun findScheduleByStaffFrom(staff: StaffEntity, start: LocalDate, limit: Int): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffAndDateAfter(staff, start, Pageable.ofSize(limit))
+    }
+
     override fun findScheduleByCompany(
         company: CompanyBranchEntity,
         date: LocalDate,
+        limit: Int?,
     ): Map<StaffEntity, List<StaffScheduleEntity>> {
-        return staffScheduleRepository.findByStaffCompanyAndDate(company, date).groupBy { it.staff }
+        return staffScheduleRepository.findAllByStaffCompanyAndDate(company, date, limit.toPageable())
+            .groupBy { it.staff }
     }
 
     override fun addStaffSchedule(schedule: List<StaffScheduleEntity>): List<StaffScheduleEntity> {
@@ -82,4 +105,18 @@ class StaffServiceImpl(
     override fun findStaffByIds(staffId: List<Long>): List<StaffEntity> {
         return staffRepository.findAllById(staffId).toList()
     }
+
+    override fun findScheduleByStaffFrom(staff: List<StaffEntity>, start: LocalDate, limit: Int): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffInAndDateAfter(staff, start, Pageable.ofSize(limit))
+    }
+
+    override fun findScheduleByStaffTo(
+        staff: List<StaffEntity>,
+        end: LocalDate,
+        limit: Int,
+    ): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffInAndDateBefore(staff, end, Pageable.ofSize(limit))
+    }
+
+
 }

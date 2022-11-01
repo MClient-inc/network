@@ -19,6 +19,8 @@ class ServiceEntity(
 @Entity
 @Table(name = "service_to_company")
 class ServiceToCompanyEntity(
+    @Column(name = "duration")
+    var durationInMinutes: Int,
     var cost: Long,
     @JoinColumn
     @ManyToOne

@@ -1,5 +1,6 @@
 package ru.mclient.network.clients.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.clients.domain.ClientEntity
@@ -17,6 +18,10 @@ class ClientsServiceImpl(
 
     override fun findClientsForCompany(company: CompanyBranchEntity): List<ClientEntity> {
         return clientsToCompanyRepository.findAllByCompany(company).map { it.client }
+    }
+
+    override fun findClientById(clientId: Long): ClientEntity? {
+        return clientsRepository.findByIdOrNull(clientId)
     }
 
     override fun findClientsForNetwork(network: CompanyNetworkEntity): List<ClientEntity> {

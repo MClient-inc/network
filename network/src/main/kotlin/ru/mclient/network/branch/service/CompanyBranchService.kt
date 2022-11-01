@@ -13,5 +13,6 @@ interface CompanyBranchService {
     fun findCompanyBranchesForNetwork(network: CompanyNetworkEntity): List<CompanyBranchEntity>
 
     fun createCompanyBranch(codename: String, title: String, network: CompanyNetworkEntity): CompanyBranchEntity
+
     fun findByIdOrCodename(query: String): CompanyBranchEntity
 }

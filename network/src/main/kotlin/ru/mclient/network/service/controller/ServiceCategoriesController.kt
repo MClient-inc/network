@@ -18,7 +18,7 @@ class ServiceCategoriesController(
     @GetMapping("/companies/{companyId}/categories")
     fun getServiceCategoriesForCompany(@PathVariable companyId: String): GetServiceCategoriesForCompanyResponse {
         val company =
-            companyBranchService.findCompanyByCodename(companyId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+            companyBranchService.findByIdOrCodename(companyId)
         val services = serviceCategoriesService.findServiceCategoriesByCompany(company)
         return GetServiceCategoriesForCompanyResponse(
             categories = services.map { service ->
@@ -34,7 +34,6 @@ class ServiceCategoriesController(
     fun getServiceCategoriesForNetwork(@PathVariable networkId: String): GetServiceCategoriesForNetworkResponse {
         val network =
             companyNetworkService.findByIdOrCodename(networkId)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val services = serviceCategoriesService.findServiceCategoriesByNetwork(network)
         return GetServiceCategoriesForNetworkResponse(
             services = services.map { service ->
@@ -52,7 +51,6 @@ class ServiceCategoriesController(
         @RequestBody data: CreateServiceCategoryRequest,
     ): CreateServiceCategoryResponse {
         val company = companyBranchService.findByIdOrCodename(companyId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val category = serviceCategoriesService.createServiceCategoriesForCompany(data.title, company)
         return CreateServiceCategoryResponse(
             id = category.category.id,
@@ -66,7 +64,6 @@ class ServiceCategoriesController(
         @RequestBody data: CreateServiceCategoryRequest,
     ): CreateServiceCategoryResponse {
         val network = companyNetworkService.findByIdOrCodename(networkId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val category = serviceCategoriesService.createServiceCategoriesForNetwork(data.title, network)
         return CreateServiceCategoryResponse(
             id = category.id,

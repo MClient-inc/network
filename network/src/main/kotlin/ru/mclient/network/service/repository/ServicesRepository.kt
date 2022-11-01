@@ -39,6 +39,8 @@ interface ServiceToCompanyRepository : CrudRepository<ServiceToCompanyEntity, Lo
         company: CompanyBranchEntity,
     ): ServiceToCompanyEntity?
 
+    fun findAllByServiceIdInAndCategoryToCompanyCompany(serviceIds: List<Long>, company: CompanyBranchEntity): List<ServiceToCompanyEntity>
+
 }
 
 interface ServiceToStaffRepository : CrudRepository<ServiceToStaffEntity, Long> {

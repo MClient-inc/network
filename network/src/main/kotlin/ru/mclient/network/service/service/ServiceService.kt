@@ -18,11 +18,17 @@ interface ServiceService {
     fun createService(
         title: String,
         cost: Long,
+        durationInMinutes: Int,
         category: ServiceCategoryEntity,
         company: CompanyBranchEntity? = null,
     ): ServiceEntity
 
     fun findServicesByService(service: ServiceEntity, company: CompanyBranchEntity?): List<ServiceToStaffEntity>
+
+
+    fun findServicesByIds(serviceIds: List<Long>): List<ServiceEntity>
+
+    fun findServicesByIdsAndCompany(serviceIds: List<Long>, company: CompanyBranchEntity): List<ServiceToCompanyEntity>
 
     fun findServicesByStaff(staff: StaffEntity): List<ServiceToStaffEntity>
 

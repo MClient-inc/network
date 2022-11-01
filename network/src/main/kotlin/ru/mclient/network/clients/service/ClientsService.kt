@@ -8,6 +8,8 @@ interface ClientsService {
 
     fun findClientsForCompany(company: CompanyBranchEntity): List<ClientEntity>
 
+    fun findClientById(clientId: Long): ClientEntity?
+
     fun findClientsForNetwork(network: CompanyNetworkEntity): List<ClientEntity>
 
     fun createClient(name: String, phone: String?, company: CompanyBranchEntity): ClientEntity
