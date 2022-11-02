@@ -43,8 +43,8 @@ class RecordController(
                     schedule = GetRecordsResponse.Schedule(
                         id = schedule.id,
                         date = schedule.date,
-                        from = schedule.from,
-                        to = schedule.to,
+                        start = schedule.from,
+                        end = schedule.to,
                         staff = GetRecordsResponse.Staff(
                             id = schedule.staff.id,
                             name = schedule.staff.name,
@@ -54,8 +54,8 @@ class RecordController(
                         GetRecordsResponse.Record(
                             id = record.id,
                             time = GetRecordsResponse.TimeOffset(
-                                from = record.time,
-                                to = record.time.plusMinutes(record.services.maxOfOrNull { it.serviceToCompany.durationInMinutes }
+                                start = record.time,
+                                end = record.time.plusMinutes(record.services.maxOfOrNull { it.serviceToCompany.durationInMinutes }
                                     ?.toLong() ?: 0L)
                             ),
                             client = GetRecordsResponse.Client(
@@ -91,6 +91,9 @@ class RecordController(
             "client not found"
         )
         val services = serviceService.findServicesByIdsAndCompany(data.services, company)
+        if (services.size != data.services.distinct().size) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "some services not found ")
+        }
         val record = recordService.createRecord(
             staff = staff,
             date = data.date,
@@ -215,9 +218,9 @@ class GetRecordsResponse(
 
     class TimeOffset(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-        val from: LocalTime,
+        val start: LocalTime,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-        val to: LocalTime,
+        val end: LocalTime,
     )
 
     class Schedule(
@@ -225,9 +228,9 @@ class GetRecordsResponse(
         val date: LocalDate,
         val staff: Staff,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-        val from: LocalTime,
+        val start: LocalTime,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-        val to: LocalTime,
+        val end: LocalTime,
     )
 
 }

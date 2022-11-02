@@ -29,10 +29,10 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.sql.DataSource
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 
 @Configuration
@@ -87,6 +87,11 @@ class SecurityConfig {
             .scope(OidcScopes.OPENID)
             .scope("message.read")
             .scope("message.write")
+            .tokenSettings(
+                TokenSettings.builder().reuseRefreshTokens(false)
+                    .refreshTokenTimeToLive(Duration.of(1000, ChronoUnit.DAYS))
+                    .build()
+            )
             .build()
         return InMemoryRegisteredClientRepository(registeredClient)
     }

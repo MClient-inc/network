@@ -22,7 +22,7 @@ class RecordEntity(
     @ManyToOne
     @JoinColumn
     var client: ClientEntity,
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var services: List<ServiceToRecordEntity> = emptyList(),
     @Id
     @GeneratedValue
