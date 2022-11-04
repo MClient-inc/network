@@ -65,8 +65,9 @@ class RecordController(
                             ),
                             services = record.services.map {
                                 GetRecordsResponse.Service(
-                                    it.serviceToCompany.service.id,
-                                    it.serviceToCompany.service.title,
+                                    id = it.serviceToCompany.service.id,
+                                    title = it.serviceToCompany.service.title,
+                                    cost = it.serviceToCompany.cost,
                                 )
                             }
                         )
@@ -127,6 +128,7 @@ class RecordController(
                 CreateRecordResponse.Service(
                     id = it.serviceToCompany.service.id,
                     title = it.serviceToCompany.service.title,
+                    cost = it.serviceToCompany.cost,
                 )
             },
         )
@@ -153,6 +155,7 @@ class CreateRecordResponse(
     class Service(
         val id: Long,
         val title: String,
+        val cost: Long,
     )
 
     class Client(
@@ -203,6 +206,7 @@ class GetRecordsResponse(
     class Service(
         val id: Long,
         val title: String,
+        val cost: Long,
     )
 
     class Client(

@@ -58,6 +58,7 @@ class ClientsController(
             networkId = client.network.id,
         )
     }
+
     @PostMapping("/networks/{networkId}/clients")
     fun createClientsForNetwork(
         @PathVariable networkId: String,
@@ -72,6 +73,23 @@ class ClientsController(
             networkId = client.network.id,
         )
     }
+
+    @GetMapping("/clients/{clientId}")
+    fun getClientById(
+        @PathVariable clientId: Long,
+    ): CreateClientResponse {
+        val client = clientsService.findClientById(clientId) ?: throw ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "client not found"
+        )
+        return CreateClientResponse(
+            id = client.id,
+            name = client.name,
+            phone = client.phone,
+            networkId = client.network.id,
+        )
+    }
+
 
 }
 

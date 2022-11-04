@@ -64,7 +64,12 @@ class StaffScheduleController(
             schedule = schedule.map { (staff, schedule) ->
                 GetMultipleStaffScheduleResponse.ScheduleDate(
                     date = date,
-                    staffId = staff.id,
+                    staff = GetMultipleStaffScheduleResponse.Staff(
+                        id = staff.id,
+                        name = staff.name,
+                        codename = staff.codename,
+                        role = staff.role,
+                    ),
                     slots = schedule.map { GetMultipleStaffScheduleResponse.ScheduleSlot(from = it.from, to = it.to) }
                 )
             }
@@ -126,7 +131,12 @@ class StaffScheduleController(
             schedule = schedule.map {
                 GetMultipleStaffScheduleResponse.ScheduleDate(
                     date = it.date,
-                    staffId = it.staff.id,
+                    staff = GetMultipleStaffScheduleResponse.Staff(
+                        id = it.staff.id,
+                        name = it.staff.name,
+                        codename = it.staff.codename,
+                        role = it.staff.role,
+                    ),
                     slots = listOf(GetMultipleStaffScheduleResponse.ScheduleSlot(from = it.from, to = it.to))
                 )
             }
@@ -207,9 +217,16 @@ class GetMultipleStaffScheduleResponse(
     val schedule: List<ScheduleDate>,
 ) {
     class ScheduleDate(
-        val staffId: Long,
+        val staff: Staff,
         val date: LocalDate,
         val slots: List<ScheduleSlot>,
+    )
+
+    class Staff(
+        val id: Long,
+        val name: String,
+        val codename: String,
+        val role: String,
     )
 
     class ScheduleSlot(

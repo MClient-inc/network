@@ -22,7 +22,7 @@ class CompanyStaffController(
                     id = it.id,
                     name = it.name,
                     codename = it.codename,
-                    role = it.role
+                    role = it.role,
                 )
             }
         )
