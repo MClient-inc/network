@@ -1,6 +1,7 @@
 package ru.mclient.network.record.service
 
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -22,6 +23,9 @@ class RecordServiceImpl(
     private val staffService: StaffService,
 ) : RecordService {
 
+    override fun findRecordById(recordId: Long): RecordEntity? {
+        return recordsRepository.findByIdOrNull(recordId)
+    }
 
     override fun findRecordsByStaff(
         staff: List<StaffEntity>,

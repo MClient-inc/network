@@ -51,6 +51,9 @@ class StaffScheduleController(
         @PathVariable companyId: String,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         @RequestParam date: LocalDate,
+        @RequestParam(required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+        time: LocalTime?,
         @RequestParam(required = false) staffId: List<Long>?,
     ): GetMultipleStaffScheduleResponse {
         val schedule = if (staffId.isNullOrEmpty()) {

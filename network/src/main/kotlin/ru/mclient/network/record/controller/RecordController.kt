@@ -10,6 +10,7 @@ import ru.mclient.network.record.service.RecordService
 import ru.mclient.network.service.service.ServiceService
 import ru.mclient.network.staff.service.StaffService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 @RestController
@@ -55,8 +56,8 @@ class RecordController(
                             id = record.id,
                             time = GetRecordsResponse.TimeOffset(
                                 start = record.time,
-                                end = record.time.plusMinutes(record.services.maxOfOrNull { it.serviceToCompany.durationInMinutes }
-                                    ?.toLong() ?: 0L)
+                                end = record.time.plusMinutes(record.services.sumOf { it.serviceToCompany.durationInMinutes }
+                                    .toLong())
                             ),
                             client = GetRecordsResponse.Client(
                                 id = record.client.id,
@@ -97,8 +98,8 @@ class RecordController(
         }
         val record = recordService.createRecord(
             staff = staff,
-            date = data.date,
-            time = data.time,
+            date = data.dateTime.toLocalDate(),
+            time = data.dateTime.toLocalTime(),
             client = client,
             company = company,
             services = services,
@@ -112,7 +113,7 @@ class RecordController(
             ),
             time = CreateRecordResponse.TimeOffset(
                 record.time,
-                record.time.plusMinutes(services.maxOfOrNull { it.durationInMinutes }?.toLong() ?: 0L)
+                record.time.plusMinutes(services.sumOf { it.durationInMinutes }.toLong())
             ),
             schedule = CreateRecordResponse.Schedule(
                 id = record.schedule.id,
@@ -134,13 +135,54 @@ class RecordController(
         )
     }
 
+    @GetMapping("/records/{recordId}")
+    fun getRecord(
+        @PathVariable recordId: Long,
+    ): GetSingleRecordResponse {
+        val record = recordService.findRecordById(recordId) ?: throw ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "record not found"
+        )
+        return GetSingleRecordResponse(
+            id = record.id,
+            time = GetSingleRecordResponse.TimeOffset(
+                record.time,
+                record.time.plusMinutes(record.services.sumOf { it.serviceToCompany.durationInMinutes }.toLong())
+            ),
+            client = GetSingleRecordResponse.Client(
+                id = record.client.id,
+                name = record.client.name,
+                phone = record.client.phone.orEmpty(),
+            ),
+            staff = GetSingleRecordResponse.Staff(
+                id = record.schedule.staff.id,
+                name = record.schedule.staff.name,
+                codename = record.schedule.staff.codename,
+                role = record.schedule.staff.role,
+            ),
+            schedule = GetSingleRecordResponse.Schedule(
+                id = record.schedule.id,
+                date = record.schedule.date,
+                start = record.schedule.from,
+                end = record.schedule.to,
+            ),
+            services = record.services.map {
+                GetSingleRecordResponse.Service(
+                    id = it.serviceToCompany.service.id,
+                    title = it.serviceToCompany.service.title,
+                    cost = it.serviceToCompany.cost,
+                )
+            },
+            totalCost = record.services.sumOf { it.serviceToCompany.durationInMinutes }.toLong()
+        )
+    }
+
 }
 
 class CreateRecordRequest(
     val staffId: Long,
     val clientId: Long,
-    val date: LocalDate,
-    val time: LocalTime,
+    val dateTime: LocalDateTime,
     val services: List<Long>,
 )
 
@@ -237,4 +279,46 @@ class GetRecordsResponse(
         val end: LocalTime,
     )
 
+}
+
+class GetSingleRecordResponse(
+    val id: Long,
+    val time: TimeOffset,
+    val client: Client,
+    val services: List<Service>,
+    val schedule: Schedule,
+    val staff: Staff,
+    val totalCost: Long,
+) {
+
+    class Service(
+        val id: Long,
+        val title: String,
+        val cost: Long,
+    )
+
+    class Client(
+        val id: Long,
+        val name: String,
+        val phone: String,
+    )
+
+    class Staff(
+        val name: String,
+        val role: String,
+        val codename: String,
+        val id: Long,
+    )
+
+    class TimeOffset(
+        val start: LocalTime,
+        val end: LocalTime,
+    )
+
+    class Schedule(
+        val id: Long,
+        val date: LocalDate,
+        val start: LocalTime,
+        val end: LocalTime,
+    )
 }

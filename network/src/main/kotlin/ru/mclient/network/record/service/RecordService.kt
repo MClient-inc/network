@@ -11,6 +11,10 @@ import java.time.LocalTime
 
 interface RecordService {
 
+    fun findRecordById(
+        recordId: Long,
+    ): RecordEntity?
+
     fun findRecordsByStaff(
         staff: List<StaffEntity>,
         start: LocalDate?,
