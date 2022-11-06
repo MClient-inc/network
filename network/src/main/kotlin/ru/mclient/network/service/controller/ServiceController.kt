@@ -60,7 +60,7 @@ class ServiceController(
     @GetMapping("/categories/{categoryId}/services")
     fun getServicesForCategory(
         @PathVariable categoryId: Long,
-        @RequestParam companyId: Long?,
+        @RequestParam(required = false) companyId: Long?,
     ): GetServicesForCategoryResponse {
         val company = companyId?.let(companyService::findCompanyById)
         if (company == null && companyId != null) {

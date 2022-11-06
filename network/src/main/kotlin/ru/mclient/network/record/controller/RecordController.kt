@@ -311,14 +311,18 @@ class GetSingleRecordResponse(
     )
 
     class TimeOffset(
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         val start: LocalTime,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         val end: LocalTime,
     )
 
     class Schedule(
         val id: Long,
         val date: LocalDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         val start: LocalTime,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         val end: LocalTime,
     )
 }
