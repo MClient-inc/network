@@ -1,6 +1,7 @@
 package ru.mclient.network.network.domain
 
 import ru.mclient.network.account.domain.MClientAccountEntity
+import ru.mclient.network.branch.domain.CompanyBranchEntity
 import javax.persistence.*
 
 
@@ -16,6 +17,8 @@ class CompanyNetworkEntity(
     @ManyToOne
     @JoinColumn
     var owner: MClientAccountEntity,
+    @OneToMany(fetch = FetchType.LAZY)
+    var companies: List<CompanyBranchEntity> = emptyList(),
     @Id
     @GeneratedValue
     @Column(name = "id")

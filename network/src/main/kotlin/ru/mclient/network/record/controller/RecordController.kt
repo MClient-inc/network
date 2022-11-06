@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import ru.mclient.network.branch.service.CompanyBranchService
 import ru.mclient.network.clients.service.ClientsService
+import ru.mclient.network.record.domain.RecordEntity
 import ru.mclient.network.record.service.RecordService
 import ru.mclient.network.service.service.ServiceService
 import ru.mclient.network.staff.service.StaffService
@@ -21,6 +22,24 @@ class RecordController(
     private val companyBranchService: CompanyBranchService,
     private val clientsService: ClientsService,
 ) {
+
+    @PatchMapping("/records/{recordId}/status")
+    fun editRecordStatus(
+        @PathVariable recordId: Long,
+        @RequestBody data: EditRecordStatusRequest,
+    ) {
+        val record = recordService.findRecordById(recordId)  ?: throw ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "record not found"
+        )
+        recordService.updateRecordVisitStatus(
+            record, when (data.status) {
+                EditRecordStatusRequest.RecordVisitStatus.WAITING -> RecordEntity.VisitStatus.WAITING
+                EditRecordStatusRequest.RecordVisitStatus.COME -> RecordEntity.VisitStatus.COME
+                EditRecordStatusRequest.RecordVisitStatus.NOT_COME -> RecordEntity.VisitStatus.NOT_COME
+            }
+        )
+    }
 
     @GetMapping("/companies/{companyQuery}/records")
     fun getRecordsForCompany(
@@ -177,6 +196,15 @@ class RecordController(
         )
     }
 
+}
+
+
+class EditRecordStatusRequest(
+    val status: RecordVisitStatus,
+) {
+    enum class RecordVisitStatus {
+        WAITING, COME, NOT_COME
+    }
 }
 
 class CreateRecordRequest(

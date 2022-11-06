@@ -24,4 +24,7 @@ interface RecordService {
 
     fun createRecord(staff: StaffEntity, date: LocalDate,  time: LocalTime, client: ClientEntity, company: CompanyBranchEntity, services: List<ServiceToCompanyEntity>): RecordEntity
 
+    fun updateRecordVisitStatus(record: RecordEntity, newStatus: RecordEntity.VisitStatus)
+
+
 }

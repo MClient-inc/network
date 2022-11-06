@@ -8,6 +8,7 @@ import ru.mclient.network.network.CompanyNetworkAlreadyExists
 import ru.mclient.network.network.CompanyNetworkDisabled
 import ru.mclient.network.network.CompanyNetworkNotExists
 import ru.mclient.network.network.domain.CompanyNetworkEntity
+import ru.mclient.network.record.domain.RecordEntity
 import javax.transaction.Transactional
 
 @Service

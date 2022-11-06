@@ -8,7 +8,9 @@ import org.springframework.web.server.ResponseStatusException
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.clients.domain.ClientEntity
 import ru.mclient.network.record.domain.RecordEntity
+import ru.mclient.network.record.domain.RecordEntity.VisitStatus.*
 import ru.mclient.network.record.domain.ServiceToRecordEntity
+import ru.mclient.network.record.repository.RecordPaymentRepository
 import ru.mclient.network.record.repository.RecordsRepository
 import ru.mclient.network.service.domain.ServiceToCompanyEntity
 import ru.mclient.network.staff.domain.StaffEntity
@@ -20,6 +22,7 @@ import javax.transaction.Transactional
 @Service
 class RecordServiceImpl(
     private val recordsRepository: RecordsRepository,
+    private val recordPaymentRepository: RecordPaymentRepository,
     private val staffService: StaffService,
 ) : RecordService {
 
@@ -85,6 +88,19 @@ class RecordServiceImpl(
         )
         record.services = services.map { ServiceToRecordEntity(record = record, serviceToCompany = it) }
         return recordsRepository.save(record)
+    }
+
+
+    @Transactional
+    override fun updateRecordVisitStatus(
+        record: RecordEntity,
+        newStatus: RecordEntity.VisitStatus,
+    ) {
+        if (record.status == newStatus)
+            return
+        record.status = newStatus
+        recordPaymentRepository.deleteAllByRecord(record)
+        recordsRepository.save(record)
     }
 
 }

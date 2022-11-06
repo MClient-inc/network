@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.CrudRepository
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.record.domain.RecordEntity
+import ru.mclient.network.record.domain.RecordPaymentEntity
 import ru.mclient.network.record.domain.ServiceToRecordEntity
 import ru.mclient.network.staff.domain.StaffEntity
 import ru.mclient.network.staff.domain.StaffScheduleEntity
@@ -16,7 +17,11 @@ interface RecordsRepository : CrudRepository<RecordEntity, Long> {
     fun findAllByScheduleStaffCompanyAndScheduleDate(company: CompanyBranchEntity, date: LocalDate): List<RecordEntity>
 
 
-    fun findAllByScheduleStaffAndScheduleDateAfter(staff: StaffEntity, date: LocalDate, pageable: Pageable): List<RecordEntity>
+    fun findAllByScheduleStaffAndScheduleDateAfter(
+        staff: StaffEntity,
+        date: LocalDate,
+        pageable: Pageable,
+    ): List<RecordEntity>
 
     fun findAllByScheduleStaffInAndScheduleDateAfter(
         staff: List<StaffEntity>,
@@ -69,3 +74,9 @@ interface RecordsRepository : CrudRepository<RecordEntity, Long> {
 }
 
 interface ServiceToRecordsRepository : CrudRepository<ServiceToRecordEntity, Long>
+
+interface RecordPaymentRepository : CrudRepository<RecordPaymentEntity, Long> {
+
+    fun deleteAllByRecord(record: RecordEntity)
+
+}

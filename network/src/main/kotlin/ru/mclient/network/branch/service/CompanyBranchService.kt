@@ -1,8 +1,8 @@
 package ru.mclient.network.branch.service
 
-import ru.mclient.network.network.domain.CompanyNetworkEntity
 import ru.mclient.network.branch.domain.CompanyBranchEntity
-import ru.mclient.network.network.CompanyNetworkNotExists
+import ru.mclient.network.network.domain.CompanyNetworkEntity
+import ru.mclient.network.record.domain.RecordEntity
 
 interface CompanyBranchService {
 
@@ -15,4 +15,5 @@ interface CompanyBranchService {
     fun createCompanyBranch(codename: String, title: String, network: CompanyNetworkEntity): CompanyBranchEntity
 
     fun findByIdOrCodename(query: String): CompanyBranchEntity
+
 }
