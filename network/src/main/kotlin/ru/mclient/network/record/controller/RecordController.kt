@@ -28,7 +28,7 @@ class RecordController(
         @PathVariable recordId: Long,
         @RequestBody data: EditRecordStatusRequest,
     ) {
-        val record = recordService.findRecordById(recordId)  ?: throw ResponseStatusException(
+        val record = recordService.findRecordById(recordId) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "record not found"
         )
@@ -112,7 +112,8 @@ class RecordController(
             "client not found"
         )
         val services = serviceService.findServicesByIdsAndCompany(data.services, company)
-        if (services.size != data.services.distinct().size) {
+            .flatMap { service -> List(data.services.count { it == service.service.id }) { service } }
+        if (services.size != data.services.size) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "some services not found ")
         }
         val record = recordService.createRecord(
