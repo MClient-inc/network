@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table
+@Table(name = "subabonements")
 class SubabonementEntity(
     var title: String,
     var usages: Int,

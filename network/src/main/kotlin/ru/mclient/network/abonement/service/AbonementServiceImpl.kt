@@ -3,11 +3,12 @@ package ru.mclient.network.abonement.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import ru.mclient.network.abonement.domain.AbonementEntity
+import ru.mclient.network.abonement.domain.ServiceToAbonementEntity
 import ru.mclient.network.abonement.domain.SubabonementEntity
 import ru.mclient.network.abonement.repository.AbonementRepository
-import ru.mclient.network.abonement.repository.SubabonementRepository
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.network.domain.CompanyNetworkEntity
+import ru.mclient.network.service.domain.ServiceEntity
 import java.time.LocalDateTime
 
 @Service
@@ -33,6 +34,18 @@ class AbonementServiceImpl(
             )
         }
         return abonementRepository.save(abonement)
+    }
+
+    override fun addServices(abonement: AbonementEntity, services: List<ServiceEntity>): AbonementEntity {
+        val serviceToAbonements = services.map {
+            ServiceToAbonementEntity(
+                service = it,
+                abonement = abonement
+            )
+        }
+        abonement.services = abonement.services + serviceToAbonements
+        abonementRepository.save(abonement)
+        return abonement
     }
 
     override fun createAbonements(

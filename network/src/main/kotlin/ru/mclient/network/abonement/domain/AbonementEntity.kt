@@ -11,7 +11,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
-@Table
+@Table(name  = "abonements")
 class AbonementEntity(
     var title: String,
     @ManyToOne
@@ -19,7 +19,10 @@ class AbonementEntity(
     var network: CompanyNetworkEntity,
     @OneToMany(cascade = [CascadeType.ALL])
     var subabonements: List<SubabonementEntity> = emptyList(),
+    @OneToMany(cascade = [CascadeType.ALL])
+    var services: List<ServiceToAbonementEntity> = emptyList(),
     @Id
     @GeneratedValue
     var id: Long = 0,
 )
+
