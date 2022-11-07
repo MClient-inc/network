@@ -193,7 +193,12 @@ class RecordController(
                     cost = it.serviceToCompany.cost,
                 )
             },
-            totalCost = record.services.sumOf { it.serviceToCompany.durationInMinutes }.toLong()
+            totalCost = record.services.sumOf { it.serviceToCompany.cost },
+            status = when(record.status) {
+                RecordEntity.VisitStatus.WAITING -> GetSingleRecordResponse.RecordVisitStatus.WAITING
+                RecordEntity.VisitStatus.COME -> GetSingleRecordResponse.RecordVisitStatus.COME
+                RecordEntity.VisitStatus.NOT_COME -> GetSingleRecordResponse.RecordVisitStatus.NOT_COME
+            }
         )
     }
 
@@ -318,7 +323,12 @@ class GetSingleRecordResponse(
     val schedule: Schedule,
     val staff: Staff,
     val totalCost: Long,
+    val status: RecordVisitStatus,
 ) {
+
+    enum class RecordVisitStatus {
+        WAITING, COME, NOT_COME
+    }
 
     class Service(
         val id: Long,

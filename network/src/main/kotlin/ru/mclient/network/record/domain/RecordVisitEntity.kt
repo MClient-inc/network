@@ -8,6 +8,7 @@ import javax.persistence.*
 @Table(name = "record_visit_payment")
 class RecordPaymentEntity(
     var type: VisitPaymentMethod,
+    @Column(name = "pay_value")
     var value: Long,
     @ManyToOne
     @JoinColumn
