@@ -3,6 +3,7 @@ package ru.mclient.network.abonement.service
 import ru.mclient.network.abonement.domain.AbonementEntity
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.network.domain.CompanyNetworkEntity
+import ru.mclient.network.service.domain.ServiceEntity
 
 interface AbonementService {
 
@@ -14,7 +15,12 @@ interface AbonementService {
         network: CompanyNetworkEntity,
         title: String,
         subabonements: List<Pair<String, Int>>,
+        services: List<ServiceEntity>,
     ): AbonementEntity
 
     fun addSubabonements(abonement: AbonementEntity, subabonements: List<Pair<String, Int>>): AbonementEntity
+
+    fun addServices(abonement: AbonementEntity, services: List<ServiceEntity>): AbonementEntity
+
+
 }
