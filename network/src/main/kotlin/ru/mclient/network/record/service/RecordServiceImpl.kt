@@ -5,11 +5,14 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import ru.mclient.network.abonement.domain.AbonementToClientEntity
+import ru.mclient.network.abonement.service.AbonementService
 import ru.mclient.network.branch.domain.CompanyBranchEntity
 import ru.mclient.network.clients.domain.ClientEntity
+import ru.mclient.network.record.domain.RecordAbonementPaymentEntity
 import ru.mclient.network.record.domain.RecordEntity
-import ru.mclient.network.record.domain.RecordEntity.VisitStatus.*
 import ru.mclient.network.record.domain.ServiceToRecordEntity
+import ru.mclient.network.record.repository.RecordAbonementPaymentRepository
 import ru.mclient.network.record.repository.RecordPaymentRepository
 import ru.mclient.network.record.repository.RecordsRepository
 import ru.mclient.network.service.domain.ServiceToCompanyEntity
@@ -23,7 +26,9 @@ import javax.transaction.Transactional
 class RecordServiceImpl(
     private val recordsRepository: RecordsRepository,
     private val recordPaymentRepository: RecordPaymentRepository,
+    private val recordAbonementPaymentRepository: RecordAbonementPaymentRepository,
     private val staffService: StaffService,
+    private val abonementService: AbonementService,
 ) : RecordService {
 
     override fun findRecordById(recordId: Long): RecordEntity? {
@@ -103,4 +108,25 @@ class RecordServiceImpl(
         recordsRepository.save(record)
     }
 
+    @Transactional
+    override fun payRecordWithAbonements(record: RecordEntity, abonements: List<AbonementToClientEntity>): List<RecordAbonementPaymentEntity> {
+        if (record.status != RecordEntity.VisitStatus.COME)
+            throw ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "record does not in code status"
+            )
+        val payments = abonements.map {
+            RecordAbonementPaymentEntity(
+                value = (it.cost / it.subabonement.usages),
+                record = record,
+                service = null,
+                abonementToClient = it
+            )
+        }
+        return recordAbonementPaymentRepository.saveAll(payments).toList()
+    }
+
+    override fun getRecordPayments(record: RecordEntity): List<RecordAbonementPaymentEntity> {
+        return recordAbonementPaymentRepository.findAllByRecord(record)
+    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import ru.mclient.network.abonement.service.AbonementService
 import ru.mclient.network.branch.service.CompanyBranchService
 import ru.mclient.network.clients.service.ClientsService
 import ru.mclient.network.record.domain.RecordEntity
@@ -23,23 +24,6 @@ class RecordController(
     private val clientsService: ClientsService,
 ) {
 
-    @PatchMapping("/records/{recordId}/status")
-    fun editRecordStatus(
-        @PathVariable recordId: Long,
-        @RequestBody data: EditRecordStatusRequest,
-    ) {
-        val record = recordService.findRecordById(recordId) ?: throw ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "record not found"
-        )
-        recordService.updateRecordVisitStatus(
-            record, when (data.status) {
-                EditRecordStatusRequest.RecordVisitStatus.WAITING -> RecordEntity.VisitStatus.WAITING
-                EditRecordStatusRequest.RecordVisitStatus.COME -> RecordEntity.VisitStatus.COME
-                EditRecordStatusRequest.RecordVisitStatus.NOT_COME -> RecordEntity.VisitStatus.NOT_COME
-            }
-        )
-    }
 
     @GetMapping("/companies/{companyQuery}/records")
     fun getRecordsForCompany(
@@ -194,7 +178,7 @@ class RecordController(
                 )
             },
             totalCost = record.services.sumOf { it.serviceToCompany.cost },
-            status = when(record.status) {
+            status = when (record.status) {
                 RecordEntity.VisitStatus.WAITING -> GetSingleRecordResponse.RecordVisitStatus.WAITING
                 RecordEntity.VisitStatus.COME -> GetSingleRecordResponse.RecordVisitStatus.COME
                 RecordEntity.VisitStatus.NOT_COME -> GetSingleRecordResponse.RecordVisitStatus.NOT_COME
@@ -205,13 +189,6 @@ class RecordController(
 }
 
 
-class EditRecordStatusRequest(
-    val status: RecordVisitStatus,
-) {
-    enum class RecordVisitStatus {
-        WAITING, COME, NOT_COME
-    }
-}
 
 class CreateRecordRequest(
     val staffId: Long,

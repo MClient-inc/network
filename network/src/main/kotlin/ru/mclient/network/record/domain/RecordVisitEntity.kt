@@ -5,38 +5,29 @@ import ru.mclient.network.service.domain.ServiceEntity
 import javax.persistence.*
 
 @Entity
-@Table(name = "record_visit_payment")
-class RecordPaymentEntity(
-    var type: VisitPaymentMethod,
+@DiscriminatorColumn(name = "payment_type")
+@Inheritance(strategy = InheritanceType.JOINED)
+open class RecordPaymentEntity(
     @Column(name = "pay_value")
-    var value: Long,
+    open var value: Long,
     @ManyToOne
     @JoinColumn
-    var record: RecordEntity,
+    open var record: RecordEntity,
+) {
     @GeneratedValue
     @Id
-    var id: Long = 0,
-) {
-    enum class VisitPaymentMethod {
-        CARD, CASH, ABONEMENT,
-    }
-
+    open var id: Long = 0
 }
 
 @Entity
 @Table(name = "record_visit_abonement")
-class RecordVisitAbonementEntity(
+class RecordAbonementPaymentEntity(
+    value: Long,
+    record: RecordEntity,
     @ManyToOne
     @JoinColumn
-    var service: ServiceEntity,
+    var service: ServiceEntity?,
     @ManyToOne
     @JoinColumn(name = "abonement_id")
     var abonementToClient: AbonementToClientEntity,
-    var requiredValue: Long,
-    @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn
-    var payment: RecordPaymentEntity,
-    @GeneratedValue
-    @Id
-    var id: Long = 0,
-)
+) : RecordPaymentEntity(value, record)

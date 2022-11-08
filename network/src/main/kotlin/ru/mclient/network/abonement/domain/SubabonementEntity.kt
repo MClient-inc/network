@@ -9,6 +9,7 @@ class SubabonementEntity(
     var title: String,
     var usages: Int,
     var availableUntil: LocalDateTime,
+    var cost: Long,
     @Column(name = "live_time")
     var liveTimeInMillis: Long,
     @ManyToOne

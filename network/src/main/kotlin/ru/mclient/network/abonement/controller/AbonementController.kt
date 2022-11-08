@@ -29,7 +29,7 @@ class AbonementController(
             network = company.network,
             title = data.title,
             subabonements = data.subabonements.map {
-                it.title to it.usages
+                Triple(it.title, it.usages, it.cost)
             },
             services = services,
         )
@@ -56,6 +56,7 @@ class AbonementController(
                     id = it.id,
                     title = it.title,
                     usages = it.usages,
+                    cost = it.cost,
                     liveTimeInMillis = it.liveTimeInMillis,
                     availableUntil = it.availableUntil,
                 )
@@ -79,7 +80,7 @@ class AbonementController(
             HttpStatus.NOT_FOUND,
             "abonement not found"
         )
-        abonementService.addSubabonements(abonement, data.subabonements.map { it.title to it.usages })
+        abonementService.addSubabonements(abonement, data.subabonements.map { Triple(it.title, it.usages, it.cost) })
         return abonement.toResponse()
     }
 
@@ -97,6 +98,7 @@ class AbonementController(
                             id = subabonement.id,
                             title = subabonement.title,
                             usages = subabonement.usages,
+                            cost = subabonement.cost,
                             liveTimeInMillis = subabonement.liveTimeInMillis,
                             availableUntil = subabonement.availableUntil,
                         )
@@ -128,9 +130,11 @@ class AddSubabonementsRequest(
     class Subabonement(
         val title: String,
         val usages: Int,
+        val cost: Long,
     )
 
 }
+
 class AddServicesRequest(
     val services: List<Long>,
 )
@@ -144,6 +148,7 @@ class CreateAbonementsRequest(
     class Subabonement(
         val title: String,
         val usages: Int,
+        val cost: Long,
     )
 
 }
@@ -162,6 +167,7 @@ class GetAbonementsResponse(
         val id: Long,
         val title: String,
         val usages: Int,
+        val cost: Long,
         val liveTimeInMillis: Long,
         val availableUntil: LocalDateTime,
     )
@@ -179,6 +185,7 @@ class GetAbonementResponse(
         val id: Long,
         val title: String,
         val usages: Int,
+        val cost: Long,
         val liveTimeInMillis: Long,
         val availableUntil: LocalDateTime,
     )
