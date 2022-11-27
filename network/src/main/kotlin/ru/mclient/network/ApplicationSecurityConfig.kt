@@ -23,6 +23,7 @@ class ApplicationSecurityConfig {
             .mvcMatchers("/clients/**").authenticated()
             .mvcMatchers("/records/**").authenticated()
             .mvcMatchers("/abonements/**").authenticated()
+            .mvcMatchers("/info/**").permitAll()
             .mvcMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().denyAll()
             .and()

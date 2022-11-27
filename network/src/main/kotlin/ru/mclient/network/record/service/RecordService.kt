@@ -34,8 +34,13 @@ interface RecordService {
 
     fun updateRecordVisitStatus(record: RecordEntity, newStatus: RecordEntity.VisitStatus)
 
-    fun payRecordWithAbonements(record: RecordEntity, abonements: List<AbonementToClientEntity>): List<RecordAbonementPaymentEntity>
+    fun payRecordWithAbonements(
+        record: RecordEntity,
+        abonements: List<AbonementToClientEntity>,
+    ): List<RecordAbonementPaymentEntity>
 
     fun getRecordPayments(record: RecordEntity): List<RecordAbonementPaymentEntity>
+
+    fun getRecordsInPeriod(company: CompanyBranchEntity, start: LocalDate, end: LocalDate): List<RecordEntity>
 
 }

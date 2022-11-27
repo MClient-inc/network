@@ -44,25 +44,25 @@ class RecordServiceImpl(
         return when {
             start == null && end == null -> {
                 recordsRepository.findAllByScheduleStaffInAndScheduleDateAfter(
-                    staff = staff, start = LocalDate.now(), pageable = Pageable.ofSize(limit)
+                    staff = staff, start = LocalDate.now().minusDays(1), pageable = Pageable.ofSize(limit)
                 )
             }
 
             start == null && end != null -> {
                 recordsRepository.findAllByScheduleStaffInAndScheduleDateBefore(
-                    staff = staff, before = end, pageable = Pageable.ofSize(limit)
+                    staff = staff, before = end.plusDays(1), pageable = Pageable.ofSize(limit)
                 )
             }
 
             start != null && end == null -> {
                 recordsRepository.findAllByScheduleStaffInAndScheduleDateAfter(
-                    staff = staff, start = start, pageable = Pageable.ofSize(limit)
+                    staff = staff, start = start.minusDays(1), pageable = Pageable.ofSize(limit)
                 )
             }
 
             start != null && end != null -> {
                 recordsRepository.findAllByScheduleStaffInAndScheduleDateBetween(
-                    staff = staff, start = start, end = end, pageable = Pageable.ofSize(limit),
+                    staff = staff, start = start.minusDays(1), end = end.plusDays(1), pageable = Pageable.ofSize(limit),
                 )
             }
 
@@ -90,6 +90,7 @@ class RecordServiceImpl(
             client = client,
             time = time,
             company = company,
+            sum = services.sumOf { it.cost },
         )
         record.services = services.map { ServiceToRecordEntity(record = record, serviceToCompany = it) }
         return recordsRepository.save(record)
@@ -109,7 +110,10 @@ class RecordServiceImpl(
     }
 
     @Transactional
-    override fun payRecordWithAbonements(record: RecordEntity, abonements: List<AbonementToClientEntity>): List<RecordAbonementPaymentEntity> {
+    override fun payRecordWithAbonements(
+        record: RecordEntity,
+        abonements: List<AbonementToClientEntity>,
+    ): List<RecordAbonementPaymentEntity> {
         if (record.status != RecordEntity.VisitStatus.COME)
             throw ResponseStatusException(
                 HttpStatus.CONFLICT,
@@ -128,5 +132,13 @@ class RecordServiceImpl(
 
     override fun getRecordPayments(record: RecordEntity): List<RecordAbonementPaymentEntity> {
         return recordAbonementPaymentRepository.findAllByRecord(record)
+    }
+
+    override fun getRecordsInPeriod(
+        company: CompanyBranchEntity,
+        start: LocalDate,
+        end: LocalDate,
+    ): List<RecordEntity> {
+        return recordsRepository.findAllByCompanyAndScheduleDateBetween(company, start.minusDays(1), end.plusDays(1))
     }
 }

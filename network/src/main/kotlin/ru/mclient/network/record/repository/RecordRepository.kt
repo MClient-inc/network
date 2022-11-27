@@ -3,9 +3,9 @@ package ru.mclient.network.record.repository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.CrudRepository
 import ru.mclient.network.branch.domain.CompanyBranchEntity
+import ru.mclient.network.record.domain.RecordAbonementPaymentEntity
 import ru.mclient.network.record.domain.RecordEntity
 import ru.mclient.network.record.domain.RecordPaymentEntity
-import ru.mclient.network.record.domain.RecordAbonementPaymentEntity
 import ru.mclient.network.record.domain.ServiceToRecordEntity
 import ru.mclient.network.staff.domain.StaffEntity
 import ru.mclient.network.staff.domain.StaffScheduleEntity
@@ -17,6 +17,10 @@ interface RecordsRepository : CrudRepository<RecordEntity, Long> {
 
     fun findAllByScheduleStaffCompanyAndScheduleDate(company: CompanyBranchEntity, date: LocalDate): List<RecordEntity>
 
+    fun findAllByCompanyAndScheduleDateBetween(
+        company: CompanyBranchEntity,
+        start: LocalDate, end: LocalDate,
+    ): List<RecordEntity>
 
     fun findAllByScheduleStaffAndScheduleDateAfter(
         staff: StaffEntity,
@@ -82,8 +86,8 @@ interface RecordPaymentRepository : CrudRepository<RecordPaymentEntity, Long> {
 
 }
 
-interface RecordAbonementPaymentRepository: CrudRepository<RecordAbonementPaymentEntity, Long> {
+interface RecordAbonementPaymentRepository : CrudRepository<RecordAbonementPaymentEntity, Long> {
 
-    fun findAllByRecord(record: RecordEntity) : List<RecordAbonementPaymentEntity>
+    fun findAllByRecord(record: RecordEntity): List<RecordAbonementPaymentEntity>
 
 }

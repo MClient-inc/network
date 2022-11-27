@@ -16,7 +16,7 @@ spring:
     username: sa
     password: password
     url: jdbc:h2:./auth
-    driver-class-name: org.h2.Driver
+#    url: jdbc:postgresql://localhost:5432/app
 
 
 logging:

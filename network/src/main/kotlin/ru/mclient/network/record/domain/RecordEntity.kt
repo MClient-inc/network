@@ -22,6 +22,7 @@ class RecordEntity(
     @ManyToOne
     @JoinColumn
     var client: ClientEntity,
+    var sum: Long,
     var status: VisitStatus = VisitStatus.WAITING,
     @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var services: List<ServiceToRecordEntity> = emptyList(),

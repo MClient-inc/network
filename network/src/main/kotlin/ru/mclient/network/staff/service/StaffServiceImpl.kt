@@ -69,7 +69,7 @@ class StaffServiceImpl(
         end: LocalDate,
         limit: Int?,
     ): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findAllByStaffAndDateBetween(staff, start, end, limit.toPageable())
+        return staffScheduleRepository.findAllByStaffAndDateBetween(staff, start.minusDays(1), end.plusDays(1), limit.toPageable())
     }
 
     override fun findScheduleByStaff(
@@ -78,15 +78,15 @@ class StaffServiceImpl(
         end: LocalDate,
         limit: Int,
     ): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findAllByStaffInAndDateBetween(staff, start, end, Pageable.ofSize(limit))
+        return staffScheduleRepository.findAllByStaffInAndDateBetween(staff, start.minusDays(1), end.plusDays(1), Pageable.ofSize(limit))
     }
 
     override fun findScheduleByStaff(staff: StaffEntity, date: LocalDate): StaffScheduleEntity? {
         return staffScheduleRepository.findByStaffAndDate(staff, date)
     }
 
-    override fun findScheduleByStaffFrom(staff: StaffEntity, start: LocalDate, limit: Int): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findAllByStaffAndDateAfter(staff, start, Pageable.ofSize(limit))
+    override fun findScheduleByStaffFrom(staff: StaffEntity, date: LocalDate, limit: Int): List<StaffScheduleEntity> {
+        return staffScheduleRepository.findAllByStaffAndDateAfter(staff, date, Pageable.ofSize(limit))
     }
 
     override fun findScheduleByCompany(
@@ -107,7 +107,7 @@ class StaffServiceImpl(
     }
 
     override fun findScheduleByStaffFrom(staff: List<StaffEntity>, start: LocalDate, limit: Int): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findAllByStaffInAndDateAfter(staff, start, Pageable.ofSize(limit))
+        return staffScheduleRepository.findAllByStaffInAndDateAfter(staff, start.minusDays(1), Pageable.ofSize(limit))
     }
 
     override fun findScheduleByStaffTo(
@@ -115,7 +115,7 @@ class StaffServiceImpl(
         end: LocalDate,
         limit: Int,
     ): List<StaffScheduleEntity> {
-        return staffScheduleRepository.findAllByStaffInAndDateBefore(staff, end, Pageable.ofSize(limit))
+        return staffScheduleRepository.findAllByStaffInAndDateBefore(staff, end.plusDays(1), Pageable.ofSize(limit))
     }
 
 
