@@ -139,6 +139,6 @@ class RecordServiceImpl(
         start: LocalDate,
         end: LocalDate,
     ): List<RecordEntity> {
-        return recordsRepository.findAllByCompanyAndScheduleDateBetween(company, start.minusDays(1), end.plusDays(1))
+        return recordsRepository.findAllByCompanyAndScheduleDateBetween(company, start, end)
     }
 }
